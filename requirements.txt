@@ -1,0 +1,11 @@
+python-dotenv
+langchain_community
+langchain_openai 
+python-docx
+pypdf
+chromadb
+pysqlite3-binary
+ragas 
+datasets
+PyMuPDF
+streamlit
