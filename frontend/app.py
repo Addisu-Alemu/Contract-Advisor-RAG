@@ -1,14 +1,11 @@
 import os
+import streamlit as st
 from dotenv import load_dotenv
 from langchain_community.document_loaders import PyPDFLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_openai import OpenAIEmbeddings, ChatOpenAI
 from langchain_community.vectorstores import Chroma
 from langchain.chains import RetrievalQA
-import streamlit as st
-from streamlit_folium import st_folium
-import folium
-import pandas as pd
 
 # Add the SQLite and ChromaDB imports
 __import__('pysqlite3')
@@ -45,31 +42,40 @@ def main():
     # Load environment variables
     openai_api_key = load_environment_variables()
 
-    # Load PDF
-    pdf_path = "data/Robinson-Advisory.pdf"
-    docs = load_pdf(pdf_path)
-    print("PDF loaded successfully.")
+    # Load PDF files in the data folder
+    pdf_files = [f for f in os.listdir('/home/addisu-alemu/Desktop/week_11/Contract-Advisor-RAG/data') if f.endswith('.pdf')]
+    for pdf_file in pdf_files:
+        pdf_path = os.path.join('/home/addisu-alemu/Desktop/week_11/Contract-Advisor-RAG/data', pdf_file)
+        print(f"Processing {pdf_file}...")
 
-    # Split documents
-    documents = split_documents(docs)
-    print(f"Documents split into {len(documents)} chunks.")
+        # Load PDF
+        docs = load_pdf(pdf_path)
+        print("PDF loaded successfully.")
 
-    # Create vector store
-    db = create_vector_store(documents, openai_api_key)
-    print("Vector store created.")
+        # Split documents
+        documents = split_documents(docs)
+        print(f"Documents split into {len(documents)} chunks.")
 
-    # Create QA chain
-    qa_chain = create_qa_chain(db, openai_api_key)
-    print("QA chain created.")
+        # Create vector store
+        db = create_vector_store(documents, openai_api_key)
+        print("Vector store created.")
 
-    # Streamlit app
-    st.title("Document Search")
-    st.write("Enter your query:")
-    query = st.text_input("Query")
-    if st.button("Search"):
+        # Create QA chain
+        qa_chain = create_qa_chain(db, openai_api_key)
+        print("QA chain created.")
+
+    st.title("Lizzy AI")
+
+    # Ask user for a query
+    query = st.text_input("Please enter a query: ")
+
+    if query:
+        # Perform QA
         result = perform_qa(qa_chain, query)
-        st.write("\nQuestion:", query)
-        st.write("Answer:", result['result'])
+
+        # Print the result
+        st.write(f"\nQuestion: {query}")
+        st.write(f"Answer: {result['result']}")
 
 if __name__ == "__main__":
     main()
