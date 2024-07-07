@@ -42,7 +42,7 @@ def main():
     openai_api_key = load_environment_variables()
 
     # Load PDF
-    pdf_path = "data/Robinson-Advisory.pdf"
+    pdf_path = "data/Raptor-Contract.pdf"
     docs = load_pdf(pdf_path)
     print("PDF loaded successfully.")
 
@@ -59,7 +59,7 @@ def main():
     print("QA chain created.")
 
     # Perform QA
-    query = "Who are the parties to the Agreement and what are their defined names?"
+    query = "Are there any conditions to the closing?"
     result = perform_qa(qa_chain, query)
     print("\nQuestion:", query)
     print("Answer:", result['result'])
